@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -26,7 +27,10 @@ public class TetrisGame extends Application {
         root.getChildren().add(btn);
         
         Scene scene = new Scene(root, 300, 250);
-        
+        // Add Icon 
+        Image icon = new Image (getClass().getResourceAsStream("Icon.png"));
+        primaryStage.getIcons().add(icon);
+        // Add Icon
         primaryStage.setTitle("Tetris Game");
         primaryStage.setScene(scene);
         primaryStage.show();
