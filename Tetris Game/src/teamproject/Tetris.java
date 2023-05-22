@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -72,7 +71,7 @@ public class Tetris extends Application {
         pause.setStyle("-fx-font: 60 arial;");
 
         p1.setPrefSize(XMAX + 50, YMAX  );
-        p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15;");
+        p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15 15 0 0;");
         p2.setPrefHeight(70);
         p2.setPrefWidth(300);
         p2.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15;");
