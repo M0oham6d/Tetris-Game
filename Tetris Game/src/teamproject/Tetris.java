@@ -74,7 +74,7 @@ public class Tetris extends Application {
         p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15 15 0 0;");
         p2.setPrefHeight(70);
         p2.setPrefWidth(300);
-        p2.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15;");
+        p2.setStyle("-fx-background-color: #252B39; -fx-background-radius: 0 0 15 15;");
         p2.getChildren().addAll(scoretext, leveltext);
         p3.getChildren().addAll(pause,start);
 
