@@ -127,8 +127,8 @@ public class HomePage extends Application {
 
         btnSetting.setOnAction(e -> {
             try {
-                Settings t3 = new Settings();
-                t3.start(new Stage());
+                Settings settings = new Settings();
+                settings.start(new Stage());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -153,12 +153,19 @@ public class HomePage extends Application {
 
     //To Add Background Music
     public void music(boolean x) {
+        Tetris tetris = new Tetris();
         AudioClip music = new AudioClip(getClass().getResource("\\Audio\\Music.mp3").toExternalForm());
-        music.setVolume(0.5);
-        if (x == true)
+        music.setVolume(0.3);
+        if (x == true) {
             music.play();
-        else
+            tetris.isMusicPlaying = true;
+            System.out.println("Music Is ON");
+        }
+        else {
             music.stop();
+            tetris.isMusicPlaying = false;
+            System.out.println("Music Is OFF");
+        }
     }
     public static void main(String[] args) {
         launch();

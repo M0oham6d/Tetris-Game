@@ -32,7 +32,6 @@ public class Settings extends Application {
     HBox audio = new HBox(20);
     HBox hGamemode = new HBox(20);
     HBox hColorMode = new HBox(20);
-    VBox Mode = new VBox(20);
     BorderPane root = new BorderPane();
     Tetris t1 = new Tetris();
     Scene scene = new Scene(root, 300, 150);
@@ -77,7 +76,7 @@ public class Settings extends Application {
 
 
 
-        CBColors.getItems().addAll("Dark", "White", "Surprise");
+        CBColors.getItems().addAll("Dark", "White");
         CBColors.getSelectionModel().select(0);
         CBColors.setStyle(  "-fx-background-color: white;" +
                 " -fx-text-fill: #333333;" +
@@ -91,17 +90,9 @@ public class Settings extends Application {
 //                t1.p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 10;");
 //                root.setStyle("-fx-background-color: #252B39;");
 //            }
-//            if (getvalue == "WHITE"){
+//            if (getvalue == "White"){
 //                t1.p1.setStyle("-fx-background-color: white; -fx-border-color: #4DAF7C; -fx-border-width: 5px;");
 //                root.setStyle("-fx-background-color: white;");
-//            }
-//            if (getvalue == "BLUE"){
-//                t1.p1.setStyle("-fx-background-color: #0D98BA; -fx-border-color: #4DAF7C; -fx-border-width: 5px;");
-//                root.setStyle("-fx-background-color: #0D98BA;");
-//            }
-//            if (getvalue == "GOLDENROD"){
-//                t1.p1.setStyle("-fx-background-color: #B87333; -fx-border-color: #4DAF7C; -fx-border-width: 5px;");
-//                root.setStyle("-fx-background-color: #B87333;");
 //            }
 //        });
 
@@ -130,9 +121,7 @@ public class Settings extends Application {
 
         audio.getChildren().addAll(music, off, on);
         audio.setAlignment(Pos.CENTER);
-
-        //Mode.getChildren().addAll(hGamemode,hColorMode);
-
+        
         root.setTop(hGamemode);
         root.setCenter(hColorMode);
         root.setBottom(audio);

@@ -81,6 +81,7 @@ public class GameOver extends Application {
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            Tetris.score = 0;
         });
 
         exit.setTextFill(Color.WHITE);

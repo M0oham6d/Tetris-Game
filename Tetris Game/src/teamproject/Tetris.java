@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -33,6 +34,7 @@ public class Tetris extends Application {
     Scene scene = new Scene(root3, XMAX +40, YMAX +124);
     Form object;
     Form nextObj = Controller.makeRect();
+    Timeline timeline;
     public static int score = 0;
     int top = 0;
     boolean game = true;
@@ -42,6 +44,8 @@ public class Tetris extends Application {
     Text leveltext = new Text("Lines: ");
     Label start = new Label("▐▐");
     Label pause = new Label("▶");
+
+    boolean isMusicPlaying;
 
     @Override
     public void start(Stage tetrisStage) throws IOException {
@@ -86,7 +90,7 @@ public class Tetris extends Application {
         //Creating Rectangles & Stage
         Form a = nextObj;
         p1.getChildren().addAll(a.a, a.b, a.c, a.d);
-        moveOnKeyPress(a);
+        controls(a);
         object = a;
         nextObj = Controller.makeRect();
         tetrisStage.setScene(scene);
@@ -100,7 +104,7 @@ public class Tetris extends Application {
         tetrisStage.show();
 
         //The TimeLine That Make Shapes Go Down Automatically
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dur), event -> {
+         timeline = new Timeline(new KeyFrame(Duration.millis(dur), event -> {
             if (object.a.getY() == 0 || object.b.getY() == 0 || object.c.getY() == 0 || object.d.getY() == 0) {
                 top++;
 
@@ -137,6 +141,7 @@ public class Tetris extends Application {
             timeline.pause();
             pause.setVisible(false);
             start.setVisible(true);
+            System.out.println("Game Stopped");
         });
 
         //To Continue The Game
@@ -144,15 +149,16 @@ public class Tetris extends Application {
             timeline.play();
             start.setVisible(false);
             pause.setVisible(true);
+            System.out.println("Game Started");
         });
-
-
     }
 
-    //Controlling System Using Keyboard Buttons
-    private void moveOnKeyPress(Form form) {
+    //Controls
+    private void controls(Form form) {
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
+            KeyCode code = event.getCode();
+
+            switch (code) {
                 case RIGHT:
                     Controller.MoveRight(form);
                     break;
@@ -165,6 +171,32 @@ public class Tetris extends Application {
                     break;
                 case UP:
                     MoveTurn(form);
+                    break;
+                    //To Pause The Game
+                case SPACE:
+                    if (timeline.getStatus() == Timeline.Status.RUNNING) {
+                        timeline.stop();
+                        pause.setVisible(false);
+                        start.setVisible(true);
+                        System.out.println("Game Stopped");
+                    } else {
+                        timeline.play();
+                        pause.setVisible(true);
+                        start.setVisible(false);
+                        System.out.println("Game Started");
+                    }
+                    break;
+                    // To Mute The Music Inside The Game
+                case M:
+                    HomePage homePage = new HomePage();
+                    if (isMusicPlaying) {
+                        homePage.music(true);
+                        isMusicPlaying = false;
+                    }
+                    else {
+                        homePage.music(false);
+                        isMusicPlaying = true;
+                    }
                     break;
             }
         });
@@ -709,7 +741,7 @@ public class Tetris extends Application {
             nextObj = Controller.makeRect();
             object = a;
             p1.getChildren().addAll(a.a, a.b, a.c, a.d);
-            moveOnKeyPress(a);
+            controls(a);
         }
 
         //Moving Down If Down Is Empty
