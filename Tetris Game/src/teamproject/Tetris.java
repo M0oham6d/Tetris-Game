@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -21,20 +20,24 @@ import javafx.util.Duration;
 
 public class Tetris extends Application {
     // The variables
+    // Defining several variables which set the size and dimensions of the game
     public static int MOVE = 25;
     public static int SIZE = MOVE;
     public static int XMAX = SIZE * 16;
     public static int YMAX = SIZE * 20;
+    //Creates a 2D array called MESH which is meant to hold the block positions
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
+    //Setting the dimensions for the scene
     Pane p1 = new Pane();
     Pane p2 = new Pane();
     Pane p3 = new Pane();
     HBox h = new HBox(10);
     VBox root3 = new VBox(10);
+    //Setting the dimensions for the scene
     Scene scene = new Scene(root3, XMAX +40, YMAX +124);
     Form object;
     Form nextObj = Controller.makeRect();
-    Timeline timeline;
+    //Setting the initial values and text strings for multiple variables
     public static int score = 0;
     int top = 0;
     boolean game = true;
@@ -42,13 +45,19 @@ public class Tetris extends Application {
     int dur = 300;
     Text scoretext = new Text("Score: ");
     Text leveltext = new Text("Lines: ");
+    Text MusicOfftext = new Text("Press M to Stop The Music");
+    //Two variables for start and pause are created with symbols as their text
     Label start = new Label("▐▐");
     Label pause = new Label("▶");
-
+    // Add Icon
+    //Setting the icon of the window to a custom image
+    Image icon = new Image (getClass().getResourceAsStream("\\images\\Icon.png"));
     boolean isMusicPlaying;
+    Timeline timeline;
 
     @Override
     public void start(Stage tetrisStage) throws IOException {
+        //Initializes the 2D array named MESH with zeroes using nested for loops
         //Reset Array
         for (int i = 0; i < MESH.length; i++) {
             for (int j = 0; j < MESH[i].length; j++) {
@@ -56,66 +65,78 @@ public class Tetris extends Application {
             }
         }
 
-        scoretext.setStyle("-fx-font: 20 arial;");
+        //Setting the size and font style for score and level texts
+        scoretext.setStyle("-fx-font: 20 Cambria;");
         scoretext.setFill(Color.WHITE);
         scoretext.setX(180);
         scoretext.setY(40);
 
-        leveltext.setStyle("-fx-font: 20 arial;");
+        leveltext.setStyle("-fx-font: 20 Cambria;");
         leveltext.setFill(Color.WHITE);
         leveltext.setX(50);
         leveltext.setY(40);
 
+        MusicOfftext.setStyle("-fx-font: 15 Cambria; -fx-font-weight: bold;");
+        MusicOfftext.setFill(Color.RED);
+        MusicOfftext.setX(70);
+        MusicOfftext.setY(85);
+
+        //Used to adjust the position of the start Label along the x and y axis
         start.setTranslateX(30);
         start.setTranslateY(20);
         start.setStyle("-fx-font: 20 arial;");
         start.setVisible(false);
 
+        //Setting the size and style for the pause Label
         pause.setTranslateX(35);
         pause.setStyle("-fx-font: 60 arial;");
 
+        //Setting the size and style for p1 which is used to hold the main game board elements
         p1.setPrefSize(XMAX + 50, YMAX  );
         p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15 15 0 0;");
+        //Customizing p2 that is used to display information about the game such as the current score and the number of lines cleared
         p2.setPrefHeight(70);
         p2.setPrefWidth(300);
         p2.setStyle("-fx-background-color: #252B39; -fx-background-radius: 0 0 15 15;");
-        p2.getChildren().addAll(scoretext, leveltext);
+        p2.getChildren().addAll(scoretext, leveltext, MusicOfftext);
+        //p3 holds the start and pause buttons
         p3.getChildren().addAll(pause,start);
 
         h.getChildren().addAll(p2,p3);
 
+        //root3 is a vbox object that holds everything together and keep the elements away from the edges
         root3.setPadding(new Insets(20 ));
         root3.getChildren().addAll(p1,h);
 
         //Creating Rectangles & Stage
         Form a = nextObj;
         p1.getChildren().addAll(a.a, a.b, a.c, a.d);
-        controls(a);
+        //keyboard input is used to control movement
+        moveOnKeyPress(a);
         object = a;
         nextObj = Controller.makeRect();
         tetrisStage.setScene(scene);
 
-        // Add Icon
-        Image icon = new Image (getClass().getResourceAsStream("\\images\\Icon.png"));
+        //Adds the image icon on the window
         tetrisStage.getIcons().add(icon);
-
-        tetrisStage.setResizable(false);
-        tetrisStage.setTitle("Tetris Game");
-        tetrisStage.show();
+        tetrisStage.setResizable(false); //Setting the window to be non-resizable by user
+        tetrisStage.setTitle("Tetris Game"); //Setting the title of the window
+        tetrisStage.show(); //Displaying the window
 
         //The TimeLine That Make Shapes Go Down Automatically
-         timeline = new Timeline(new KeyFrame(Duration.millis(dur), event -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(dur), event -> {
+            //When any of the shapes reach the top of the board the counter top is incremented
             if (object.a.getY() == 0 || object.b.getY() == 0 || object.c.getY() == 0 || object.d.getY() == 0) {
                 top++;
 
             } else
                 top = 0;
 
-            if (top == 2) {
+            if (top == 2) { //if the value of top reaches 2 the game ends
                 // GAME OVER
                 game = false;
             }
-            if (top == 10) {
+            if (top == 10) { //if it reaches 10 then the game ends and the phrase game over is displayed to the user and the game window is closed
                 GameOver gameOver = new GameOver();
                 try {
                     gameOver.start(new Stage());
@@ -126,7 +147,8 @@ public class Tetris extends Application {
             }
 
             if (game) {
-                MoveDown(object);
+                //when an object moves down by one row it updates the score and lines display text
+                MD(object);
                 scoretext.setText("Score: " + Integer.toString(score));
                 leveltext.setText("Lines: " + Integer.toString(linesNo));
             }
@@ -136,34 +158,32 @@ public class Tetris extends Application {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
-        //To Pause The Game
+        //To Pause The Game with a click of the mouse
         pause.setOnMouseClicked(e -> {
             timeline.pause();
             pause.setVisible(false);
             start.setVisible(true);
-            System.out.println("Game Stopped");
         });
 
-        //To Continue The Game
+        //To Continue The Game when the mouse is clicked again
         start.setOnMouseClicked(e -> {
             timeline.play();
             start.setVisible(false);
             pause.setVisible(true);
-            System.out.println("Game Started");
         });
+
+
     }
 
-    //Controls
-    private void controls(Form form) {
+    //Controlling the different shapes of the game using the keyboard
+    private void moveOnKeyPress(Form form) {
         scene.setOnKeyPressed(event -> {
-            KeyCode code = event.getCode();
-
-            switch (code) {
+            switch (event.getCode()) {
                 case RIGHT:
                     Controller.MoveRight(form);
                     break;
                 case DOWN:
-                    MoveDown(form);
+                    MD(form);
                     score++;
                     break;
                 case LEFT:
@@ -172,7 +192,6 @@ public class Tetris extends Application {
                 case UP:
                     MoveTurn(form);
                     break;
-                    //To Pause The Game
                 case SPACE:
                     if (timeline.getStatus() == Timeline.Status.RUNNING) {
                         timeline.stop();
@@ -186,7 +205,7 @@ public class Tetris extends Application {
                         System.out.println("Game Started");
                     }
                     break;
-                    // To Mute The Music Inside The Game
+                // To Mute The Music Inside The Game
                 case M:
                     HomePage homePage = new HomePage();
                     if (isMusicPlaying) {
@@ -202,7 +221,7 @@ public class Tetris extends Application {
         });
     }
 
-    //To Rotate The Shapes
+    //Rotating all the different shapes of the game ( j, l, o, s, t and z)
     private void MoveTurn(Form form) {
         int f = form.form;
         Rectangle a = form.a;
@@ -211,30 +230,29 @@ public class Tetris extends Application {
         Rectangle d = form.d;
         switch (form.getName()) {
             case "j":
-//			a
-//			b	c	d
-                if (f == 1 && cB(a, 1, -1) && cB(c, -1, -1) && cB(d, -2, -2)) {
+            /*
+                1(a)
+                1(b)1(c)1(d)
+            */
+                if (f == 1 && Rotation(a, 1, -1) && Rotation(c, -1, -1) && Rotation(d, -2, -2)) {
                     MoveRight(form.a);
-                    MoveDown(form.a);
-                    MoveDown(form.c);
+                    MD(form.a);
+                    MD(form.c);
                     MoveLeft(form.c);
-                    MoveDown(form.d);
-                    MoveDown(form.d);
+                    MD(form.d);
+                    MD(form.d);
                     MoveLeft(form.d);
                     MoveLeft(form.d);
                     form.changeForm();
                     break;
-//				b	a
-//				c
-//				d
-
+                    /*
+                        1(b)1(a)
+                        1(c)
+                        1(d)
+                     */
                 }
-
-//				b	a
-//				c
-//				d
-                if (f == 2 && cB(a, -1, -1) && cB(c, -1, 1) && cB(d, -2, 2)) {
-                    MoveDown(form.a);
+                if (f == 2 && Rotation(a, -1, -1) && Rotation(c, -1, 1) && Rotation(d, -2, 2)) {
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveLeft(form.c);
                     MoveUp(form.c);
@@ -244,14 +262,12 @@ public class Tetris extends Application {
                     MoveUp(form.d);
                     form.changeForm();
                     break;
-//		d	c	b
-//				a
-
+                    /*
+                        1(d)1(c)1(b)
+                        1(a)
+                    */
                 }
-
-//		d	c	b
-//				a
-                if (f == 3 && cB(a, -1, 1) && cB(c, 1, 1) && cB(d, 2, 2)) {
+                if (f == 3 && Rotation(a, -1, 1) && Rotation(c, 1, 1) && Rotation(d, 2, 2)) {
                     MoveLeft(form.a);
                     MoveUp(form.a);
                     MoveUp(form.c);
@@ -262,36 +278,37 @@ public class Tetris extends Application {
                     MoveRight(form.d);
                     form.changeForm();
                     break;
-//				d
-//				c
-//			a	b
-
+                    /*
+                            1(d)
+                            1(c)
+                        1(a)1(b)
+                    */
                 }
-
-//				d
-//				c
-//			a	b
-                if (f == 4 && cB(a, 1, 1) && cB(c, 1, -1) && cB(d, 2, -2)) {
+                if (f == 4 && Rotation(a, 1, 1) && Rotation(c, 1, -1) && Rotation(d, 2, -2)) {
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveRight(form.c);
-                    MoveDown(form.c);
+                    MD(form.c);
                     MoveRight(form.d);
                     MoveRight(form.d);
-                    MoveDown(form.d);
-                    MoveDown(form.d);
+                    MD(form.d);
+                    MD(form.d);
                     form.changeForm();
                     break;
-//				a
-//				b	c	d
+                    /*
+                        1(a)
+                        1(b)1(c)1(d)
+                     */
                 }
                 break;
             case "l":
-//					a
-//			b	c	d
-                if (f == 1 && cB(a, 1, -1) && cB(c, 1, 1) && cB(b, 2, 2)) {
+            /*
+                        1(a)
+                1(b)1(c)1(d)
+            */
+                if (f == 1 && Rotation(a, 1, -1) && Rotation(c, 1, 1) && Rotation(b, 2, 2)) {
                     MoveRight(form.a);
-                    MoveDown(form.a);
+                    MD(form.a);
                     MoveUp(form.c);
                     MoveRight(form.c);
                     MoveUp(form.b);
@@ -300,54 +317,46 @@ public class Tetris extends Application {
                     MoveRight(form.b);
                     form.changeForm();
                     break;
-//					b
-//					c
-//					d	a
-
+					/*
+                        1(b)
+                        1(c)
+                        1(d)1(a)
+                    */
                 }
-
-//					b
-//					c
-//					d	a
-                if (f == 2 && cB(a, -1, -1) && cB(b, 2, -2) && cB(c, 1, -1)) {
-                    MoveDown(form.a);
+                if (f == 2 && Rotation(a, -1, -1) && Rotation(b, 2, -2) && Rotation(c, 1, -1)) {
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveRight(form.b);
                     MoveRight(form.b);
-                    MoveDown(form.b);
-                    MoveDown(form.b);
+                    MD(form.b);
+                    MD(form.b);
                     MoveRight(form.c);
-                    MoveDown(form.c);
+                    MD(form.c);
                     form.changeForm();
                     break;
-//					d	c	b
-//					a
-
+                    /*
+                        1(d)1(c)1(b)
+                        1(a)
+                    */
                 }
-
-//					d	c	b
-//					a
-                if (f == 3 && cB(a, -1, 1) && cB(c, -1, -1) && cB(b, -2, -2)) {
+                if (f == 3 && Rotation(a, -1, 1) && Rotation(c, -1, -1) && Rotation(b, -2, -2)) {
                     MoveLeft(form.a);
                     MoveUp(form.a);
-                    MoveDown(form.c);
+                    MD(form.c);
                     MoveLeft(form.c);
-                    MoveDown(form.b);
-                    MoveDown(form.b);
+                    MD(form.b);
+                    MD(form.b);
                     MoveLeft(form.b);
                     MoveLeft(form.b);
                     form.changeForm();
                     break;
-//					d	a
-//					c
-//					b
-
+                    /*
+                        1(a)1(d)
+                            1(c)
+                            1(b)
+                    */
                 }
-
-//					d	a
-//					c
-//					b
-                if (f == 4 && cB(a, 1, 1) && cB(b, -2, 2) && cB(c, -1, 1)) {
+                if (f == 4 && Rotation(a, 1, 1) && Rotation(b, -2, 2) && Rotation(c, -1, 1)) {
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveLeft(form.b);
@@ -358,17 +367,25 @@ public class Tetris extends Application {
                     MoveUp(form.c);
                     form.changeForm();
                     break;
-//					a
-//					d	c	b
+                    /*
+                                1(a)
+                        1(b)1(c)1(d)
+                    */
                 }
                 break;
             case "o":
+            /*
+                1(a)1(b)
+                1(c)1(d)
+            */
                 break;
             case "s":
-//				b	a
-//			d	c
-                if (f == 1 && cB(a, -1, -1) && cB(c, -1, 1) && cB(d, 0, 2)) {
-                    MoveDown(form.a);
+            /*
+                    1(b)1(a)
+                1(d)1(c)
+            */
+                if (f == 1 && Rotation(a, -1, -1) && Rotation(c, -1, 1) && Rotation(d, 0, 2)) {
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveLeft(form.c);
                     MoveUp(form.c);
@@ -376,33 +393,28 @@ public class Tetris extends Application {
                     MoveUp(form.d);
                     form.changeForm();
                     break;
-//			d
-//			c	b
-//				a
-
+                    /*
+                        1(d)
+                        1(c)1(b)
+                            1(a)
+                     */
                 }
-
-//			d
-//			c	b
-//				a
-                if (f == 2 && cB(a, 1, 1) && cB(c, 1, -1) && cB(d, 0, -2)) {
+                if (f == 2 && Rotation(a, 1, 1) && Rotation(c, 1, -1) && Rotation(d, 0, -2)) {
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveRight(form.c);
-                    MoveDown(form.c);
-                    MoveDown(form.d);
-                    MoveDown(form.d);
+                    MD(form.c);
+                    MD(form.d);
+                    MD(form.d);
                     form.changeForm();
                     break;
-//				b	a
-//			d	c
-
+                    /*
+                            1(b)1(a)
+                        1(d)1(c)
+                    */
                 }
-
-//				b	a
-//			d	c
-                if (f == 3 && cB(a, -1, -1) && cB(c, -1, 1) && cB(d, 0, 2)) {
-                    MoveDown(form.a);
+                if (f == 3 && Rotation(a, -1, -1) && Rotation(c, -1, 1) && Rotation(d, 0, 2)) {
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveLeft(form.c);
                     MoveUp(form.c);
@@ -410,100 +422,97 @@ public class Tetris extends Application {
                     MoveUp(form.d);
                     form.changeForm();
                     break;
-//			d
-//			c	b
-//				a
-
+                    /*
+                        1(d)
+                        1(c)1(b)
+                            1(a)
+                    */
                 }
-
-//			d
-//			c	b
-//				a
-                if (f == 4 && cB(a, 1, 1) && cB(c, 1, -1) && cB(d, 0, -2)) {
+                if (f == 4 && Rotation(a, 1, 1) && Rotation(c, 1, -1) && Rotation(d, 0, -2)) {
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveRight(form.c);
-                    MoveDown(form.c);
-                    MoveDown(form.d);
-                    MoveDown(form.d);
+                    MD(form.c);
+                    MD(form.d);
+                    MD(form.d);
                     form.changeForm();
                     break;
-//				b	a
-//			d	c
+                    /*
+                            1(b)1(a)
+                        1(d)1(c)
+                    */
                 }
                 break;
             case "t":
-//			a	b	d
-//				c
-                if (f == 1 && cB(a, 1, 1) && cB(d, -1, -1) && cB(c, -1, 1)) {
+            /*
+                1(a)1(b)1(d)
+                    1(c)
+            */
+                if (f == 1 && Rotation(a, 1, 1) && Rotation(d, -1, -1) && Rotation(c, -1, 1)) {
                     MoveUp(form.a);
                     MoveRight(form.a);
-                    MoveDown(form.d);
+                    MD(form.d);
                     MoveLeft(form.d);
                     MoveLeft(form.c);
                     MoveUp(form.c);
                     form.changeForm();
                     break;
-//				a
-//			c	b
-//				d
-
+                    /*
+                            1(a)
+                        1(c)1(b)
+                            1(d)
+                    */
                 }
-
-//				a
-//			c	b
-//				d
-                if (f == 2 && cB(a, 1, -1) && cB(d, -1, 1) && cB(c, 1, 1)) {
+                if (f == 2 && Rotation(a, 1, -1) && Rotation(d, -1, 1) && Rotation(c, 1, 1)) {
                     MoveRight(form.a);
-                    MoveDown(form.a);
+                    MD(form.a);
                     MoveLeft(form.d);
                     MoveUp(form.d);
                     MoveUp(form.c);
                     MoveRight(form.c);
                     form.changeForm();
                     break;
-//				c
-//			d	b	a
-
+                    /*
+                            1(c)
+                        1(a)1(b)1(d)
+                    */
                 }
-
-//				c
-//			d	b	a
-                if (f == 3 && cB(a, -1, -1) && cB(d, 1, 1) && cB(c, 1, -1)) {
-                    MoveDown(form.a);
+                if (f == 3 && Rotation(a, -1, -1) && Rotation(d, 1, 1) && Rotation(c, 1, -1)) {
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveUp(form.d);
                     MoveRight(form.d);
                     MoveRight(form.c);
-                    MoveDown(form.c);
+                    MD(form.c);
                     form.changeForm();
                     break;
-//				d
-//				b	c
-//				a
-
+                    /*
+                        1(a)
+                        1(b)1(c)
+                        1(d)
+                    */
                 }
-
-//				d
-//				b	c
-//				a
-                if (f == 4 && cB(a, -1, 1) && cB(d, 1, -1) && cB(c, -1, -1)) {
+                if (f == 4 && Rotation(a, -1, 1) && Rotation(d, 1, -1) && Rotation(c, -1, -1)) {
                     MoveLeft(form.a);
                     MoveUp(form.a);
                     MoveRight(form.d);
-                    MoveDown(form.d);
-                    MoveDown(form.c);
+                    MD(form.d);
+                    MD(form.c);
                     MoveLeft(form.c);
                     form.changeForm();
                     break;
-//			a	b	d
-//				c
+                    /*
+                        1(a)1(b)1(d)
+                            1(c)
+                    */
                 }
                 break;
             case "z":
-//			b	a
-//				c	d
-                if (f == 1 && cB(b, 1, 1) && cB(c, -1, 1) && cB(d, -2, 0)) {
+            /*
+                1(b)1(a)
+                    1(c)1(d)
+            */
+                if (f == 1 && Rotation(b, 1, 1) && Rotation(c, -1, 1) && Rotation(d, -2, 0)) {
                     MoveUp(form.b);
                     MoveRight(form.b);
                     MoveLeft(form.c);
@@ -512,32 +521,27 @@ public class Tetris extends Application {
                     MoveLeft(form.d);
                     form.changeForm();
                     break;
-//				b
-//			c	a
-//			d
-
+                    /*
+                            1(b)
+                        1(c)1(a)
+                        1(d)
+                     */
                 }
-
-//				b
-//			c	a
-//			d
-                if (f == 2 && cB(b, -1, -1) && cB(c, 1, -1) && cB(d, 2, 0)) {
-                    MoveDown(form.b);
+                if (f == 2 && Rotation(b, -1, -1) && Rotation(c, 1, -1) && Rotation(d, 2, 0)) {
+                    MD(form.b);
                     MoveLeft(form.b);
                     MoveRight(form.c);
-                    MoveDown(form.c);
+                    MD(form.c);
                     MoveRight(form.d);
                     MoveRight(form.d);
                     form.changeForm();
                     break;
-//			b	a
-//				c	d
-
+                    /*
+                        1(b)1(a)
+                            1(c)1(d)
+                    */
                 }
-
-//			b	a
-//				c	d
-                if (f == 3 && cB(b, 1, 1) && cB(c, -1, 1) && cB(d, -2, 0)) {
+                if (f == 3 && Rotation(b, 1, 1) && Rotation(c, -1, 1) && Rotation(d, -2, 0)) {
                     MoveUp(form.b);
                     MoveRight(form.b);
                     MoveLeft(form.c);
@@ -546,102 +550,96 @@ public class Tetris extends Application {
                     MoveLeft(form.d);
                     form.changeForm();
                     break;
-//				b
-//			c	a
-//			d
-
+                    /*
+                            1(b)
+                        1(c)1(a)
+                        1(d)
+                    */
                 }
-
-//				b
-//			c	a
-//			d
-                if (f == 4 && cB(b, -1, -1) && cB(c, 1, -1) && cB(d, 2, 0)) {
-                    MoveDown(form.b);
+                if (f == 4 && Rotation(b, -1, -1) && Rotation(c, 1, -1) && Rotation(d, 2, 0)) {
+                    MD(form.b);
                     MoveLeft(form.b);
                     MoveRight(form.c);
-                    MoveDown(form.c);
+                    MD(form.c);
                     MoveRight(form.d);
                     MoveRight(form.d);
                     form.changeForm();
                     break;
-//			b	a
-//				c	d
+                    /*
+                        1(b)1(a)
+                            1(c)1(d)
+                    */
                 }
                 break;
             case "i":
-//			a	b	c	d
-                if (f == 1 && cB(a, 2, 2) && cB(b, 1, 1) && cB(d, -1, -1)) {
+            /*
+                1(a)1(b)1(c)1(d)
+            */
+                if (f == 1 && Rotation(a, 2, 2) && Rotation(b, 1, 1) && Rotation(d, -1, -1)) {
                     MoveUp(form.a);
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveRight(form.a);
                     MoveUp(form.b);
                     MoveRight(form.b);
-                    MoveDown(form.d);
+                    MD(form.d);
                     MoveLeft(form.d);
                     form.changeForm();
                     break;
-//					a
-//					b
-//					c
-//					d
-
+                    /*
+                        1(a)
+                        1(b)
+                        1(c)
+                        1(d)
+                    */
                 }
-
-//					a
-//					b
-//					c
-//					d
-                if (f == 2 && cB(a, -2, -2) && cB(b, -1, -1) && cB(d, 1, 1)) {
-                    MoveDown(form.a);
-                    MoveDown(form.a);
+                if (f == 2 && Rotation(a, -2, -2) && Rotation(b, -1, -1) && Rotation(d, 1, 1)) {
+                    MD(form.a);
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveLeft(form.a);
-                    MoveDown(form.b);
+                    MD(form.b);
                     MoveLeft(form.b);
                     MoveUp(form.d);
                     MoveRight(form.d);
                     form.changeForm();
                     break;
-//			a	b	c	d
-
+                    /*
+                        1(a)1(b)1(c)1(d)
+                    */
                 }
-
-//			a	b	c	d
-                if (f == 3 && cB(a, 2, 2) && cB(b, 1, 1) && cB(d, -1, -1)) {
+                if (f == 3 && Rotation(a, 2, 2) && Rotation(b, 1, 1) && Rotation(d, -1, -1)) {
                     MoveUp(form.a);
                     MoveUp(form.a);
                     MoveRight(form.a);
                     MoveRight(form.a);
                     MoveUp(form.b);
                     MoveRight(form.b);
-                    MoveDown(form.d);
+                    MD(form.d);
                     MoveLeft(form.d);
                     form.changeForm();
                     break;
-//					a
-//					b
-//					c
-//					d
-
+                    /*
+                        1(a)
+                        1(b)
+                        1(c)
+                        1(d)
+                    */
                 }
-
-//					a
-//					b
-//					c
-//					d
-                if (f == 4 && cB(a, -2, -2) && cB(b, -1, -1) && cB(d, 1, 1)) {
-                    MoveDown(form.a);
-                    MoveDown(form.a);
+                if (f == 4 && Rotation(a, -2, -2) && Rotation(b, -1, -1) && Rotation(d, 1, 1)) {
+                    MD(form.a);
+                    MD(form.a);
                     MoveLeft(form.a);
                     MoveLeft(form.a);
-                    MoveDown(form.b);
+                    MD(form.b);
                     MoveLeft(form.b);
                     MoveUp(form.d);
                     MoveRight(form.d);
                     form.changeForm();
+                    /*
+                        1(a)1(b)1(c)1(d)
+                    */
                     break;
-//			a	b	c	d
                 }
                 break;
         }
@@ -707,7 +705,7 @@ public class Tetris extends Application {
             } while (lines.size() > 0);
     }
 
-    private void MoveDown(Rectangle rect) {
+    private void MD(Rectangle rect) {
         if (rect.getY() + MOVE < YMAX)
             rect.setY(rect.getY() + MOVE);
 
@@ -728,9 +726,9 @@ public class Tetris extends Application {
             rect.setY(rect.getY() - MOVE);
     }
 
-    private void MoveDown(Form form) {
+    private void MD(Form form) {
         if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
-                || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
+                || form.d.getY() == YMAX - SIZE || BlankSpaceA(form) || BlankSpaceB(form) || BlankSpaceC(form) || BlankSpaceD(form)) {
             MESH[(int) form.a.getX() / SIZE][(int) form.a.getY() / SIZE] = 1;
             MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
             MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
@@ -741,7 +739,7 @@ public class Tetris extends Application {
             nextObj = Controller.makeRect();
             object = a;
             p1.getChildren().addAll(a.a, a.b, a.c, a.d);
-            controls(a);
+            moveOnKeyPress(a);
         }
 
         //Moving Down If Down Is Empty
@@ -760,24 +758,24 @@ public class Tetris extends Application {
         }
     }
 
-    private boolean moveA(Form form) {
+    private boolean BlankSpaceA(Form form) {
         return (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveB(Form form) {
+    private boolean BlankSpaceB(Form form) {
         return (MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveC(Form form) {
+    private boolean BlankSpaceC(Form form) {
         return (MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveD(Form form) {
+    private boolean BlankSpaceD(Form form) {
         return (MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] == 1);
     }
 
     //To Make Sure That There Is An Empty Place To Rotate The Shape
-    private boolean cB(Rectangle rect, int x, int y) {
+    private boolean Rotation(Rectangle rect, int x, int y) {
         boolean xb = false;
         boolean yb = false;
         if (x >= 0)
@@ -790,6 +788,7 @@ public class Tetris extends Application {
             yb = rect.getY() + y * MOVE < YMAX;
         return xb && yb && MESH[((int) rect.getX() / SIZE) + x][((int) rect.getY() / SIZE) - y] == 0;
     }
+
     public static void main(String[] args) {
         launch(args);
     }
