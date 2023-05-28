@@ -28,8 +28,8 @@ public class Tetris extends Application {
     //Creates a 2D array called MESH which is meant to hold the block positions
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     //Setting the dimensions for the scene
-    public static Pane p1 = new Pane();
-    public static Pane p2 = new Pane();
+    public Pane p1 = new Pane();
+    public Pane p2 = new Pane();
     Pane p3 = new Pane();
     HBox h = new HBox(10);
     VBox root3 = new VBox(10);
