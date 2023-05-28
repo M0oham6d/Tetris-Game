@@ -28,8 +28,8 @@ public class Tetris extends Application {
     //Creates a 2D array called MESH which is meant to hold the block positions
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     //Setting the dimensions for the scene
-    Pane p1 = new Pane();
-    Pane p2 = new Pane();
+    public static Pane p1 = new Pane();
+    public static Pane p2 = new Pane();
     Pane p3 = new Pane();
     HBox h = new HBox(10);
     VBox root3 = new VBox(10);
@@ -42,9 +42,9 @@ public class Tetris extends Application {
     int top = 0;
     boolean game = true;
     int linesNo = 0;
-    int dur = 300;
-    Text scoretext = new Text("Score: ");
-    Text leveltext = new Text("Lines: ");
+    public static int dur = 300;
+    public static Text scoretext = new Text("Score: ");
+    public static Text leveltext = new Text("Lines: ");
     Text MusicOfftext = new Text("Press M to Stop The Music");
     //Two variables for start and pause are created with symbols as their text
     Label start = new Label("▐▐");
@@ -54,6 +54,9 @@ public class Tetris extends Application {
     Image icon = new Image (getClass().getResourceAsStream("\\images\\Icon.png"));
     boolean isMusicPlaying;
     Timeline timeline;
+    //Coloring Pane & Text
+    public static String color = "#252B39";
+    public static Color textColor = Color.web("#FFFFFF");
 
     @Override
     public void start(Stage tetrisStage) throws IOException {
@@ -67,12 +70,12 @@ public class Tetris extends Application {
 
         //Setting the size and font style for score and level texts
         scoretext.setStyle("-fx-font: 20 Cambria;");
-        scoretext.setFill(Color.WHITE);
+        scoretext.setFill(textColor);
         scoretext.setX(180);
         scoretext.setY(40);
 
         leveltext.setStyle("-fx-font: 20 Cambria;");
-        leveltext.setFill(Color.WHITE);
+        leveltext.setFill(textColor);
         leveltext.setX(50);
         leveltext.setY(40);
 
@@ -93,11 +96,11 @@ public class Tetris extends Application {
 
         //Setting the size and style for p1 which is used to hold the main game board elements
         p1.setPrefSize(XMAX + 50, YMAX  );
-        p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15 15 0 0;");
+        p1.setStyle("-fx-background-color: "+ color +"; -fx-background-radius: 15 15 0 0;");
         //Customizing p2 that is used to display information about the game such as the current score and the number of lines cleared
         p2.setPrefHeight(70);
         p2.setPrefWidth(300);
-        p2.setStyle("-fx-background-color: #252B39; -fx-background-radius: 0 0 15 15;");
+        p2.setStyle("-fx-background-color: "+ color +"; -fx-background-radius: 0 0 15 15;");
         p2.getChildren().addAll(scoretext, leveltext, MusicOfftext);
         //p3 holds the start and pause buttons
         p3.getChildren().addAll(pause,start);

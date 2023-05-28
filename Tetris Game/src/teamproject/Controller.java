@@ -82,7 +82,7 @@ public class Controller {
             d.setY(SIZE);
             name = "l";
             /*
-                1(a)
+                        1(a)
                 1(b)1(c)1(d)
             */
         }
@@ -149,5 +149,4 @@ public class Controller {
         }
         return new Form(a, b, c, d, name);
     }
-   // Form(a, b, c, d, name);
 }

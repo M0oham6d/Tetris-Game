@@ -74,12 +74,12 @@ public class HomePage extends Application {
 
         // Hover Effect
         btnPlay.setOnMouseEntered(e -> {
-            // set the color of the buuton white and the rest is as they are
+            // set the color of the button white and the rest is as they are
             btnPlay.setStyle("-fx-background-color: #a5c5ff; -fx-text-fill: white; -fx-background-radius: 10px;");
         });
         // when the mouse exited
         btnPlay.setOnMouseExited(e -> {
-            // set the color of the buuton dark blue
+            // set the color of the button dark blue
             btnPlay.setStyle("-fx-background-color: #252B39; -fx-background-radius: 10px; ");
         });
 

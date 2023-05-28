@@ -35,6 +35,8 @@ public class Settings extends Application {
     //we make borderpane to add
     BorderPane root = new BorderPane();
     Tetris t1 = new Tetris();
+//    public static int dur = Tetris.dur ;
+
     //we make scene to add borderpane on it
     Scene scene = new Scene(root, 300, 150);
 
@@ -61,24 +63,23 @@ public class Settings extends Application {
                 " -fx-border-width: 1px;");
 
         // Events For Game Mode
-        //We tried hard but we couldn't
-//        CBGamemode.setOnAction(e -> {
-//            String selected = CBGamemode.getValue();
-//            switch (selected) {
-//                case "Easy" :
-//                    t1.dur = 900;
-//                    System.out.println(selected);
-//                    break;
-//                case "Normal" :
-//                    t1.dur = 300;
-//                    System.out.println(selected);
-//                    break;
-//                case "Hard" :
-//                    t1.dur = 100;
-//                    System.out.println(selected);
-//                    break;
-//            }
-//        });
+        CBGamemode.setOnAction(e -> {
+            String selected = CBGamemode.getValue();
+            switch (selected) {
+                case "Easy" :
+                    Tetris.dur = 900;
+                    System.out.println("Mode : " +selected);
+                    break;
+                case "Normal" :
+                    Tetris.dur = 300;
+                    System.out.println("Mode : " +selected);
+                    break;
+                case "Hard" :
+                    Tetris.dur = 100;
+                    System.out.println("Mode : " +selected);
+                    break;
+            }
+        });
 
         //we use HBox hGamemode to add label gamemode and combobox CBGamemode and put it on center
         hGamemode.setAlignment(Pos.CENTER);
@@ -88,7 +89,7 @@ public class Settings extends Application {
         CBColors.getItems().addAll("Dark", "White", "Black");
         //we use getselectionmodel to make defult value =0
         CBColors.getSelectionModel().select(0);
-        //we give combobox CBColors  some propirties
+        //we give combobox CBColors  some proprieties
         CBColors.setStyle(  "-fx-background-color: white;" +
                 " -fx-text-fill: #333333;" +
                 " -fx-font-family: Cambria;" +
@@ -99,25 +100,31 @@ public class Settings extends Application {
         CBColors.setOnAction(e -> {
             String getvalue = CBColors.getValue();
             if (getvalue == "Dark"){
-                t1.p1.setStyle("-fx-background-color: #252B39; -fx-background-radius: 15 15 0 0;");
+                Tetris.color = "#252B39";
+                Tetris.textColor = Color.web("#FFFFFF");
                 root.setStyle("-fx-background-color: #252B39;");
                 gamemode.setTextFill(Color.WHITE);
                 theme.setTextFill(Color.WHITE);
                 music.setTextFill(Color.WHITE);
+                System.out.println("Theme : " + getvalue);
             }
             else if (getvalue == "White"){
-                t1.p1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 0 0;");
-                root.setStyle("-fx-background-color: White;");
+                Tetris.color = "#DFDFDF";
+                Tetris.textColor = Color.web("#000000");
+                root.setStyle("-fx-background-color: #DFDFDF;");
                 gamemode.setTextFill(Color.BLACK);
                 theme.setTextFill(Color.BLACK);
                 music.setTextFill(Color.BLACK);
+                System.out.println("Theme : " + getvalue);
             }
             else {
-                t1.p1.setStyle("-fx-background-color: black; -fx-background-radius: 15 15 0 0;");
+                Tetris.color = "#000000";
+                Tetris.textColor = Color.web("#FFFFFF");
                 root.setStyle("-fx-background-color: black;");
                 gamemode.setTextFill(Color.WHITE);
                 theme.setTextFill(Color.WHITE);
                 music.setTextFill(Color.WHITE);
+                System.out.println("Theme : " + getvalue);
             }
         });
 
